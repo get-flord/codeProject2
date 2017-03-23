@@ -9,6 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
 
 /**
  * MonitorClient handles the UDP connection to MonitorServer. At fixed periods
@@ -21,8 +22,11 @@ import java.net.InetSocketAddress;
  */
 public class MonitorClient {
     public static final int DEFAULT_PORT = 50000;
+    public static final int DEFAULT_SIZE = 1024;
     public DatagramSocket socket;
     public DatagramPacket packet;
+    public InetAddress serverAddress;
+    public int serverPort;
 
     private MonitorClientGUI clientGUI;
 
@@ -40,19 +44,71 @@ public class MonitorClient {
                 port = Integer.parseInt(args[0].substring(splitIndex + 1, args[0].length()));
             }
             else {
-                port = 50000;
+                port = DEFAULT_PORT;
             }
             InetAddress inetAddress = InetAddress.getByName(address);
             InetSocketAddress socketAddress = new InetSocketAddress(inetAddress, port);
             this.socket = new DatagramSocket();
             this.socket.bind(socketAddress);
             System.out.println("Socket bound to " + socketAddress + "." );
+
+            // To be changed
+            this.clientGUI = new MonitorClientGUI();
         }
     }
 
     public void loopForever() throws IOException {
         while(true) {
+            String request = "gibbe da data";
+            this.send(request);
+            String response;
+            response = this.receive();
 
+            // Parse response into data = {hostname, x, y} then pass to GUI
+            String[] data = response.split(":");
+            this.clientGUI.addDataPoint(data[0], data[1], data[2]);
+
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                // balllz
+            }
         }
+    }
+
+    public void send(String message) {
+        byte[] data = new byte[DEFAULT_SIZE];
+        DatagramPacket packet;
+        byte[] temp = message.getBytes();
+        System.arraycopy(temp, 0, data, 0, temp.length);
+        try {
+            //placeholder values
+            packet = new DatagramPacket(data, DEFAULT_SIZE);
+            this.socket.send(packet);
+
+            boolean isConnected = this.socket.isConnected();
+            System.out.println("Socket still connected(send): " + isConnected);
+        } catch (IOException e) {
+            //
+        }
+
+    }
+
+    public String receive() {
+        String message = "";
+        try {
+            //placeholder values
+            DatagramPacket packet = new DatagramPacket(new byte[DEFAULT_SIZE], DEFAULT_SIZE);
+            this.socket.receive(packet);
+            byte[] data = packet.getData();
+            message = new String(data);
+            message = message.substring(0, packet.getLength());
+
+            boolean temp = this.socket.isConnected();
+            System.out.println("Socket still connected(recv): " + temp);
+        } catch (IOException e) {
+            //
+        }
+        return message;
     }
 }
