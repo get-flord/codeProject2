@@ -10,7 +10,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../openmpi-2.0.2/ompi/mpi/java/java/mpi.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/openmpi-2.0.2/ompi/mpi/java/java/mpi.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -19,7 +19,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../dependencies/jcommon-1.0.23.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/jfreechart-1.0.19.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -28,7 +28,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../dependencies/jfreechart-1.0.19.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/jcommon-1.0.23.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

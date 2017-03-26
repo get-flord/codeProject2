@@ -57,7 +57,7 @@ public class MonitorClient {
         }
     }
 
-    public void loopForever() throws IOException {
+    public void loopForever() throws IOException, CloneNotSupportedException {
         while(true) {
             String request = "gibbe da data";
             this.send(request);
@@ -66,7 +66,7 @@ public class MonitorClient {
 
             // Parse response into data = {hostname, x, y} then pass to GUI
             String[] data = response.split(":");
-            this.clientGUI.addDataPoint(data[0], data[1], data[2]);
+            this.clientGUI.addDataPoint(data[0], Double.valueOf(data[1]), Double.valueOf(data[2]));
 
             try {
                 TimeUnit.SECONDS.sleep(5);
