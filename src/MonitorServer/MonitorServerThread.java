@@ -1,36 +1,56 @@
 package MonitorServer;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.*;
+import java.util.Set;
 
 public class MonitorServerThread extends Thread {
 
+    public static final int DEFAULT_PORT = 50000;
+    public static final int DEFAULT_PACKET_SIZE = 1024;
     MonitorServer server;
     DatagramSocket socket;
-    InetAddress serverAddress;
+    InetAddress clientAddress;
+    DatagramPacket packet;
     int port;
 
-    public MonitorServerThread(int port, InetAddress serverAddress, DatagramSocket socket, MonitorServer server) {
+    public MonitorServerThread(DatagramPacket packet, DatagramSocket socket, MonitorServer server) {
         this.server = server;
-        this.port = port;
         this.socket = socket;
-        this.serverAddress = serverAddress;
+        this.packet = packet;
+        this.clientAddress = this.packet.getAddress();
+        this.port = this.packet.getPort();
+
 
     }
 
-    private final ScheduledExecutorService schedule = Executors.newScheduledThreadPool(1);
-
     public void run() {
-        final Runnable sendData = new Runnable() {
-            @Override
-            public void run() {
-
+        byte[] response = new byte[DEFAULT_PACKET_SIZE];
+        String hostname;
+        Double data;
+        String message = new String(this.packet.getData());
+        if (message.equals("meminfo")) {
+            Set<Integer> processes = this.server.processPercentageMemoryUsed.keySet();
+            for (int i : processes) {
+                hostname = this.server.processHostname.get(i);
+                data = this.server.processPercentageMemoryUsed.get(i);
+                String temp = hostname + ":" + data;
+                byte[] tempBytes = temp.getBytes();
+                System.arraycopy(tempBytes, 0, response, 0, tempBytes.length);
+                DatagramPacket packet = new DatagramPacket(response, DEFAULT_PACKET_SIZE);
+                try {
+                    this.socket.connect(clientAddress, port);
+                    this.socket.send(packet);
+                }
+                catch (IOException e) {
+                    //
+                }
             }
-        };
-        final ScheduledFuture<?> sendDataHandler = schedule.scheduleAtFixedRate(sendData, 0, 5, TimeUnit.SECONDS);
+        }
+        else {
+            throw new IllegalArgumentException("Client must ask for 'meminfo'");
+        }
     }
 }
