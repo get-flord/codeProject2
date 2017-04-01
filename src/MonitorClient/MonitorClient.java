@@ -20,7 +20,6 @@ public class MonitorClient {
     public int serverPort;
 
     private MonitorClientGUI clientGUI;
-    private int[] counters = new int[4];
 
     /**
      * Instantiates a new MonitorClient with args[]. This binds a DatagramSocket
@@ -50,7 +49,6 @@ public class MonitorClient {
             this.socket.bind(socketAddress);
             System.out.println("Socket bound to " + socketAddress + "." );
 
-            // To be changed
             this.clientGUI = new MonitorClientGUI();
         }
     }
@@ -62,20 +60,19 @@ public class MonitorClient {
      */
     public void loopForever() throws IOException, CloneNotSupportedException {
         do {
-            for (int i = 0; i < counters.length; i++) {
-                String request = "";
-                this.send(request);
-                String response;
-                response = this.receive();
+            LocalTime now = LocalTime.now();
+            double x = (double) now.getHour() * 3600 + now.getMinute() * 60 + now.getSecond();
+            String request = "";
+            this.send(request);
+            String response;
+            response = this.receive();
 
-                // Parse response into data = {hostname, data} then pass to GUI
-                // response should be formated "hostname:data"
+            // Parse response into data = {hostname, data} then pass to GUI
+            // response should be formated "hostname:data"
 
-                String[] data = response.split(":");
-                this.clientGUI.addDataPoint(data[0], (double)this.counters[i], Double.valueOf(data[1]));
-                this.clientGUI.updateChart();
-                this.counters[i] += 5;
-            }
+            String[] data = response.split(":");
+            this.clientGUI.addDataPoint(data[0], x, Double.valueOf(data[1]));
+            this.clientGUI.updateChart();
 
             try {
                 TimeUnit.SECONDS.sleep(5);

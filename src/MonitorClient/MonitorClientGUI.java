@@ -65,7 +65,9 @@ class MonitorClientGUI extends JFrame {
         }
         xySeries.add(x, y);
         int numDataPoints = xySeries.getItemCount();
-        if (numDataPoints > MonitorClientGUI.MAX_DATA_POINTS)
+        if (numDataPoints > MonitorClientGUI.MAX_DATA_POINTS) {
             xySeries = xySeries.createCopy(numDataPoints - MonitorClientGUI.MAX_DATA_POINTS, numDataPoints - 1);
+
+        }
     }
 }
