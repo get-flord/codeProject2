@@ -1,8 +1,5 @@
 package MonitorClient;
 
-/**
- * Created by cFournierg on 3/22/17.
- */
 import javax.swing.*;
 import java.util.*;
 import org.jfree.chart.*;
