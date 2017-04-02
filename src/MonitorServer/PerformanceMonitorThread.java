@@ -41,8 +41,7 @@ public class PerformanceMonitorThread extends Thread {
                 //
             } catch (MPIException e) {
                 //
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 //
             }
         }

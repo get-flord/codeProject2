@@ -69,7 +69,6 @@ public class MonitorClient {
 
             // Parse response into data = {hostname, data} then pass to GUI
             // response should be formated "hostname:data"
-
             String[] data = response.split(":");
             this.clientGUI.addDataPoint(data[0], x, Double.valueOf(data[1]));
             this.clientGUI.updateChart();
@@ -92,7 +91,6 @@ public class MonitorClient {
         DatagramPacket packet;
         byte[] temp = message.getBytes();
 
-        // NOTE: if temp.length > DEFAULT_PACKET_SIZE what do?
         System.arraycopy(temp, 0, data, 0, temp.length);
         try {
             packet = new DatagramPacket(data, DEFAULT_PACKET_SIZE);
